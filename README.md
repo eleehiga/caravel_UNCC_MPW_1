@@ -1,4 +1,162 @@
-# Analog Spiking Neuron Circuit and 10-bit Digital to Analog Converter - Caravel Submission 
+# Gonzaga University EENG406 Analog Neural Network project 
+## Project information
+* by Ethan Higa, Chris Chock, Matthew Gauss, Carter Roth, Elwyn Frailey
+* Teacher: Claudio Talarico
+## Important Links
+1. https://github.com/iic-jku/iic-osic-tools: GitHub for the docker installation  
+2. https://github.com/Bryce-Readyhough/caravel_UNCC_MPW_1: GitHub for the neural network ngspice simulation 
+3. https://ieeexplore.ieee.org/document/9184447: IEEE paper code with theory and results we are trying to replicate
+
+## Installing Docker and Using docker:
+1. Download and install GitHub desktop. 
+   * https://docs.github.com/en/desktop/installing-and-configuring-github-desktop/installing-and-authenticating-to-github-desktop/installing-github-desktop 
+   * Follow instructions on the website. 
+   * A GitHub account is necessary to download the GitHub desktop. 
+2. Download and install docker desktop: 
+   * https://www.docker.com/products/docker-desktop/ 
+3. Clone the GitHub repository to your host computer from: 
+   * https://github.com/iic-jku/iic-osic-tools 
+   * This will have ngspice and other useful programs. 
+   
+      a. Open GitHub Desktop 
+  
+      b. To clone from the internet, click on current repository box in the top left. 
+      
+      c. Hit add and select clone repository 
+      
+      d. Hit URL and past the GitHub link under Repository URL 
+      
+      e. Before you hit the blue cone button, select the folder you want the repository saved to (know where you saved this because we will grab it later) 
+  
+4. Installing VcXsrc 
+   * https://github.com/iic-jku/iic-osic-tools#installing-x11-server
+
+      a. Click on the blue link VcXsrc next to For Windows (There is also a link for Mac) 
+  
+      b. Download Vcxsrv which will install Xlaunch (for more details and instructions read the GitHub) 
+  
+5. Open XLaunch 
+
+   a. Select `Multiple Windows` and `Display Number = 0` and then `Next` 
+  
+   b. `Start no Client` and then `Next` 
+  
+   c. Check all boxes and then `Next` 
+  
+   d. `Finish`
+  
+   * XLaunch should be running now (click the ^ in the bottom right of your desktop to see that the XLaunch icon is present. If so, it is running) 
+6. Enter the downloaded docker tools Git repository from the command prompt 
+
+   a. Open your computers Command Prompt (type Command Prompt in computer’s search bar to find it) 
+  
+   b. Cd to the iic-osic-tools folder (use dir command to see what directories you can go in) 
+  
+   c. Enter the command `.\start_x.bat` 
+  
+   d. After it installs, enter command `docker start iic-osic-tools_xserver` (enter in the command prompt window not the new terminal that pops up). 
+  
+7. Cloning repository into the docker 
+
+   a. In the container enter the command `git clone  https://github.com/Bryce-Readyhough/caravel_UNCC_MPW_1` 
+  
+   * The screenshot below is the correct terminal. 
+   * When the terminal opens, the current directory should be /foss/designs. 
+   ![](https://github.com/eleehiga/nn_for_iic_tools/blob/mpw-one-b-merged/pictures/foss_designs.png)
+8. Uncompressing data and displaying circuit in magic 
+
+   a. Cd to caravel_UNCC_MPW_1 and run `make uncompress -j$nproc` 
+  
+   b. Cd mag 
+  
+   c. Ls 
+  
+   d. Use command ‘magic user_project_wrapper.mag’ 
+  
+   e. Magic should pop up 
+  
+##  Running Spice code
+1. Pathing to the directory  
+
+   a. Be in the /foss/designs directory in the docker.
+  
+   b. cd to ` caravel_UNCC_MPW_1/mag` folder 
+  
+2. Editing the spice file 
+
+   a. Before running the spice code enter command `nano user_project_wrapper.spice 
+  ` 
+   b. Add the following lines of code under the .include lines:  
+  
+     ```
+     .param mc_mm_switch=0 
+     .param mc_pr_switch=1  
+     ```
+   c. Comment out all the includes with `*`
+  
+   d. Then enter in these lines (which are the correct includes for the docker) 
+  
+     ```
+     .include"/foss/pdks/sky130A/libs.tech/ngspice/r+c/res_typical__cap_typical__lin.spice" 
+     .include "/foss/pdks/sky130A/libs.tech/ngspice/r+c/res_typical__cap_typical.spice" 
+     .include "/foss/pdks/sky130A/libs.tech/ngspice/corners/tt.spice"  
+     ```
+     
+   e. Remove `v("analog_io[15]")` in the plot command 
+  
+   * Just unnecessary code
+   * (if using nano, you can ctrl W to search code) 
+  
+   f. To leave nano use `ctrl X` the hit `y` and then enter
+  
+   * `y` is yes to save 
+  
+   g. Enter the command `ngspice user_project_wrapper.spice`
+  ` 
+   h. The graph should look like fig 6. (a) in the IEEE paper https://ieeexplore.ieee.org/document/9184447 
+  
+## Running the Docker post setup
+
+a. Launch XLaunch (might auto open on computer start up) 
+
+   * Reference step 6. under “Installing Docker and Using docker” to fix settings if they did not save 
+  
+b. Launch Docker Desktop 
+
+c. Press the play button as shown  
+
+   ![](https://github.com/eleehiga/nn_for_iic_tools/blob/mpw-one-b-merged/pictures/docker.png)
+   * a terminal should appear 
+   * the current directory should be /foss/designs
+## Outputs
+![](https://github.com/eleehiga/nn_for_iic_tools/blob/mpw-one-b-merged/pictures/RS.png)
+To have the above output in the `mag` directory and enter `ngspice user_project_wrapper.spice`. This regular spiking pattern is created as the capacitor `Ca` is charged and then discharged. The control voltages are set as: 
+```
+Vdd vdda1 gnd DC 0.7V 
+Vgnd vssa1 gnd DC 0.0V 
+Vth analog_io[10] gnd DC 0.1V 
+Vk analog_io[9] gnd DC 0.15V 
+Vw analog_io[11] gnd DC 0.18V 
+Vr analog_io[8] gnd DC 0.25V 
+Vau analog_io[12] gnd DC 0.7V 
+Vad analog_io[7] gnd DC 0.0V 
+```
+![](https://github.com/eleehiga/nn_for_iic_tools/blob/mpw-one-b-merged/pictures/CH.png)
+To have the above output in the `mag` directory enter `ngspice neuron-test.spice`. This chattering pattern is created as the IEEE document said by “manipulating the control voltages” in which there will be periodic bursts of the neuron. The control voltages are set as: 
+```
+Vdd vpwr gnd DC 0.7V 
+Vgnd vgnd gnd DC 0.0V 
+Vth vth gnd DC 0.1V 
+Vk vk gnd DC 0.15V 
+Vw vw gnd DC 0.01V 
+Vr vr gnd DC 0.37V 
+Vau vau gnd DC 0.08V 
+Vad vad gnd DC 0.25V 
+```
+![](https://github.com/eleehiga/nn_for_iic_tools/blob/mpw-one-b-merged/pictures/RS_sub.png)
+Above is the output of entering `ngspice user_project_wrapper.spice` but with changing `Vdd` as `0.635V` below the original `0.7V`. As shown, there is not enough voltage to support the spiking as shown by the flat spikes. 
+
+# Based off of: Analog Spiking Neuron Circuit and 10-bit Digital to Analog Converter - Caravel Submission 
 
 ## Analog Spiking Neuron Circuit
 
@@ -85,33 +243,3 @@ Simple block representing all inputs and outputs of DAC.
 <p align=”center”>
 <img src="/doc/abstract_block_diagram.png" width="45%"> 
 </p>
-
-# Installation
-
-To setup and install the repo for development:
-
-1. Install prerequisite tools:
-   1. Install [Magic VLSI Layout Tool](http://opencircuitdesign.com/magic/)
-      - Note: As of 12/7/2020 you must install Magic from source code. The packaged version will not work with OpenPDKS.
-   2. Install [KLayout](https://www.klayout.de/build.html)
-   3. Install [SkywaterPDK](https://github.com/google/skywater-pdk) and [OpenPDK](https://github.com/RTimothyEdwards/open_pdks) using [OpenLane](https://github.com/efabless/openlane.git)
-      1. Clone and Install OpenLane. This will also grab and install SkywaterPDK and OpenPDK for you:
-
-```shell
-export PDK_ROOT=(where pdks will be installed)
-
-cd $PDK_ROOT
-
-git clone https://github.com/efabless/openlane.git -b mpw-one-a
-
-cd openlane
-export OPENLANE_ROOT=$(pwd)
-make
-```
-
-​			2. Clone and uncompress the repo:
-
-```shell
-git clone https://github.com/Bryce-Readyhough/caravel_UNCC_MPW_1.git
-make uncompress -j$nproc
-```
