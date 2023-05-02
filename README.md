@@ -129,7 +129,7 @@ c. Press the play button as shown
    * a terminal should appear 
    * the current directory should be /foss/designs
 ## Outputs
-![](https://github.com/eleehiga/nn_for_iic_tools/blob/mpw-one-b-merged/pictures/RS.png)
+![](https://github.com/eleehiga/nn_for_iic_tools/blob/mpw-one-b-merged/pictures/RS_inv.png)
 To have the above output in the `mag` directory and enter `ngspice user_project_wrapper.spice`. This regular spiking pattern is created as the capacitor `Ca` is charged and then discharged. The control voltages are set as: 
 ```
 Vdd vdda1 gnd DC 0.7V 
@@ -141,7 +141,7 @@ Vr analog_io[8] gnd DC 0.25V
 Vau analog_io[12] gnd DC 0.7V 
 Vad analog_io[7] gnd DC 0.0V 
 ```
-![](https://github.com/eleehiga/nn_for_iic_tools/blob/mpw-one-b-merged/pictures/CH.png)
+![](https://github.com/eleehiga/nn_for_iic_tools/blob/mpw-one-b-merged/pictures/CH_inv.png)
 To have the above output in the `mag` directory enter `ngspice neuron-test.spice`. This chattering pattern is created as the IEEE document said by “manipulating the control voltages” in which there will be periodic bursts of the neuron. The control voltages are set as: 
 ```
 Vdd vpwr gnd DC 0.7V 
@@ -153,7 +153,7 @@ Vr vr gnd DC 0.37V
 Vau vau gnd DC 0.08V 
 Vad vad gnd DC 0.25V 
 ```
-![](https://github.com/eleehiga/nn_for_iic_tools/blob/mpw-one-b-merged/pictures/RS_sub.png)
+![](https://github.com/eleehiga/nn_for_iic_tools/blob/mpw-one-b-merged/pictures/RS_sub_inv.png)
 Above is the output of entering `ngspice user_project_wrapper.spice` but with changing `Vdd` as `0.635V` below the original `0.7V`. As shown, there is not enough voltage to support the spiking as shown by the flat spikes. 
 
 # Based off of: Analog Spiking Neuron Circuit and 10-bit Digital to Analog Converter - Caravel Submission 
